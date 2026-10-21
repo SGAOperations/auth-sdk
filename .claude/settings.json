@@ -3,12 +3,10 @@
     "allow": [
       "Bash(gh *)",
       "Bash(git *)",
-      "Bash(npm *)",
       "Skill",
       "Bash(grep)",
       "Bash(grep *)",
       "Bash(find)",
-      "Bash(find *)",
       "Bash(ls)",
       "Bash(ls *)",
       "Bash(wc)",
@@ -16,9 +14,11 @@
       "Bash(pwd)",
       "Bash(pwd *)",
       "Bash(mkdir -p *)",
-      "Edit(**)",
-      "Write(**)",
-      "Read(~/.claude/plugins/**)"
+      "Read(~/.claude/plugins/**)",
+      "Bash(npm test)",
+      "Bash(npm run lint)",
+      "Bash(npm run format:check)",
+      "Bash(npx tsc --noEmit)"
     ],
     "deny": [
       "Bash(gh pr merge *)",
@@ -30,7 +30,13 @@
       "Bash(git push *:main)",
       "Bash(npm publish *)",
       "Bash(npm login *)",
-      "Bash(npm adduser *)"
+      "Bash(npm adduser *)",
+      "Bash(git -c *)",
+      "Bash(git config *)",
+      "Bash(npm exec *)",
+      "Bash(npm install *)",
+      "Bash(find * -exec *)",
+      "Bash(find * -delete*)"
     ]
   },
   "enabledPlugins": {
@@ -41,9 +47,9 @@
       "source": {
         "source": "github",
         "repo": "b-at-neu/port",
-        "ref": "v0.4.0"
+        "ref": "376a7eb29989db2a8870b5f14b8b8f6939471e5a"
       },
-      "autoUpdate": true
+      "autoUpdate": false
     }
   }
 }
