@@ -1,0 +1,47 @@
+{
+  "$schema": "https://raw.githubusercontent.com/b-at-neu/port/main/schema/port.config.schema.json",
+  "tracker": "github",
+  "repo": "SGAOperations/auth-sdk",
+  "branches": {
+    "integration": "main",
+    "production": "main"
+  },
+  "commands": {
+    "bootstrap": [],
+    "checks": [],
+    "artifacts": null,
+    "worktrees": null,
+    "budget": null,
+    "tick": null,
+    "forensics": null
+  },
+  "docs": {
+    "engineering": null,
+    "design": null
+  },
+  "models": {
+    "plan": "opus",
+    "impl": "sonnet",
+    "review": "sonnet",
+    "revise": "sonnet"
+  },
+  "labels": {},
+  "modules": {
+    "approvalGate": false,
+    "release": false,
+    "scope": false
+  },
+  "release": {
+    "postPublishHook": null
+  },
+  "reviewCycleCap": 5,
+  "budget": {
+    "wallClockMinutes": null
+  },
+  "concurrency": {
+    "sharedFiles": [],
+    "overlapThreshold": 2
+  },
+  "sessionRequiredPaths": ["CLAUDE.md", ".claude/**", "port.config.json"],
+  "extraAllow": []
+}
