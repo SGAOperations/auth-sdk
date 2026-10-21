@@ -18,7 +18,9 @@
       "Bash(npm test)",
       "Bash(npm run lint)",
       "Bash(npm run format:check)",
-      "Bash(npx tsc --noEmit)"
+      "Bash(npx tsc --noEmit)",
+      "Edit(**)",
+      "Write(**)"
     ],
     "deny": [
       "Bash(gh pr merge *)",
