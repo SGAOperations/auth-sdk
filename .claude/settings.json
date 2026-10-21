@@ -20,7 +20,24 @@
       "Bash(npm run format:check)",
       "Bash(npx tsc --noEmit)",
       "Edit(**)",
-      "Write(**)"
+      "Write(**)",
+      "Bash(egrep)",
+      "Bash(egrep *)",
+      "Bash(rg)",
+      "Bash(rg *)",
+      "Bash(find *)",
+      "Bash(sort)",
+      "Bash(sort *)",
+      "Bash(uniq)",
+      "Bash(uniq *)",
+      "Bash(stat)",
+      "Bash(stat *)",
+      "Bash(file)",
+      "Bash(file *)",
+      "WebFetch(domain:code.claude.com)",
+      "Bash(node scripts/port-artifacts.mjs *)",
+      "Bash(node scripts/port-worktrees.mjs *)",
+      "Bash(node scripts/port-budget.mjs *)"
     ],
     "deny": [
       "Bash(gh pr merge *)",
@@ -38,7 +55,15 @@
       "Bash(npm exec *)",
       "Bash(npm install *)",
       "Bash(find * -exec *)",
-      "Bash(find * -delete*)"
+      "Bash(find * -delete*)",
+      "Bash(find * -execdir *)",
+      "Bash(find * -ok *)",
+      "Bash(find * -okdir *)",
+      "Bash(find -exec *)",
+      "Bash(find -execdir *)",
+      "Bash(find -delete*)",
+      "Bash(find -ok *)",
+      "Bash(find -okdir *)"
     ]
   },
   "enabledPlugins": {
@@ -49,9 +74,9 @@
       "source": {
         "source": "github",
         "repo": "b-at-neu/port",
-        "ref": "376a7eb29989db2a8870b5f14b8b8f6939471e5a"
+        "ref": "v0.4.0"
       },
-      "autoUpdate": false
+      "autoUpdate": true
     }
   }
 }

@@ -4,14 +4,14 @@
   "repo": "SGAOperations/auth-sdk",
   "branches": {
     "integration": "main",
-    "production": "main"
+    "production": null
   },
   "commands": {
     "bootstrap": [],
     "checks": [],
-    "artifacts": null,
-    "worktrees": null,
-    "budget": null,
+    "artifacts": "node scripts/port-artifacts.mjs",
+    "worktrees": "node scripts/port-worktrees.mjs",
+    "budget": "node scripts/port-budget.mjs",
     "tick": null,
     "forensics": null
   },
@@ -27,7 +27,7 @@
   },
   "labels": {},
   "modules": {
-    "approvalGate": false,
+    "approvalGate": true,
     "release": false,
     "scope": false
   },
@@ -42,6 +42,14 @@
     "sharedFiles": [],
     "overlapThreshold": 2
   },
-  "sessionRequiredPaths": ["CLAUDE.md", ".claude/**", "port.config.json"],
-  "extraAllow": []
+  "sessionRequiredPaths": [
+    "CLAUDE.md",
+    ".claude/**",
+    "port.config.json"
+  ],
+  "extraAllow": [
+    "Bash(node scripts/port-artifacts.mjs *)",
+    "Bash(node scripts/port-worktrees.mjs *)",
+    "Bash(node scripts/port-budget.mjs *)"
+  ]
 }
