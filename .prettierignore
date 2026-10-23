@@ -1,0 +1,9 @@
+dist
+coverage
+package-lock.json
+
+# installed and rewritten by the port pipeline
+.claude/
+scripts/port-*.mjs
+.github/workflows/approval-check.yml
+.github/workflows/artifacts.yml
