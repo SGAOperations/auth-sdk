@@ -1,11 +1,11 @@
-# @sgaoperations/sgauth
+# @nusgaops/sgauth
 
 Client SDK for SGAuth, the SGA Operations single sign-on service.
 
 ## Install
 
 ```bash
-npm install @sgaoperations/sgauth
+npm install @nusgaops/sgauth
 ```
 
 The package is on the public npm registry, so no `.npmrc` or token is needed.

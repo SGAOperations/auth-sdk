@@ -7,8 +7,8 @@
 import { appendFileSync, readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
-const PACKAGE_NAME = "@sgaoperations/sgauth";
-const REGISTRY_URL = "https://registry.npmjs.org/@sgaoperations%2fsgauth";
+const PACKAGE_NAME = "@nusgaops/sgauth";
+const REGISTRY_URL = "https://registry.npmjs.org/@nusgaops%2fsgauth";
 const SEMVER =
   /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$/;
 

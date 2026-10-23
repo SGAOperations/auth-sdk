@@ -8,7 +8,7 @@ const CHANGELOG =
 function input(overrides = {}) {
   return {
     tag: "v0.1.0",
-    name: "@sgaoperations/sgauth",
+    name: "@nusgaops/sgauth",
     version: "0.1.0",
     changelog: CHANGELOG,
     publishedVersions: [],
@@ -40,9 +40,9 @@ describe("evaluateRelease", () => {
   });
 
   it("fails on the wrong package name", () => {
-    const { errors } = evaluateRelease(input({ name: "@sgaoperations/other" }));
+    const { errors } = evaluateRelease(input({ name: "@nusgaops/other" }));
     expect(errors).toHaveLength(1);
-    expect(errors[0]).toMatch(/expected @sgaoperations\/sgauth/);
+    expect(errors[0]).toMatch(/expected @nusgaops\/sgauth/);
   });
 
   it("fails when CHANGELOG.md has no section for the version", () => {

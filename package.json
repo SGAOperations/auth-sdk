@@ -1,5 +1,5 @@
 {
-  "name": "@sgaoperations/sgauth",
+  "name": "@nusgaops/sgauth",
   "version": "0.1.0",
   "description": "Client SDK for SGAuth, the SGA Operations single sign-on service",
   "license": "UNLICENSED",

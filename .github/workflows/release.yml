@@ -1,4 +1,4 @@
-# Publishes @sgaoperations/sgauth to the public npm registry when a v* tag is
+# Publishes @nusgaops/sgauth to the public npm registry when a v* tag is
 # pushed. Authentication is npm trusted publishing: npm exchanges this job's
 # GitHub OIDC token, so no npm token exists anywhere. Provenance comes from
 # publishConfig.provenance in package.json.
