@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { resolveConfig, SgauthConfigError } from "./config.js";
 
 const env = { SGAUTH_URL: "https://auth.example.com/" };
@@ -58,6 +58,18 @@ describe("resolveConfig", () => {
     expect(() =>
       resolveConfig({ baseUrl: "ftp://auth.example.com" }, {}),
     ).toThrow(SgauthConfigError);
+  });
+
+  it("throws SgauthConfigError, not ReferenceError, where process is undefined", () => {
+    vi.stubGlobal("process", undefined);
+    try {
+      expect(() => resolveConfig({})).toThrow(SgauthConfigError);
+      expect(
+        resolveConfig({ baseUrl: "https://auth.example.com" }).baseUrl,
+      ).toBe("https://auth.example.com");
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it.each([

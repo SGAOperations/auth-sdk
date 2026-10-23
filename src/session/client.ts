@@ -30,6 +30,15 @@ class UpstreamFailure extends Error {
 
 class TimeoutSignal extends Error {}
 
+/** Releases an unread body so the connection can be reused. Never throws or waits. */
+function discardBody(response: Response): void {
+  try {
+    response.body?.cancel().catch(() => undefined);
+  } catch {
+    // Best effort only.
+  }
+}
+
 async function requestSession(
   config: ResolvedConfig,
   forward: string,
@@ -57,8 +66,12 @@ async function requestSession(
         `${config.baseUrl}/api/sgauth/session`,
         init,
       );
-      if (response.status === 401) return null;
+      if (response.status === 401) {
+        discardBody(response);
+        return null;
+      }
       if (response.status !== 200) {
+        discardBody(response);
         throw new UpstreamFailure({ kind: "http", status: response.status });
       }
       let body: unknown;

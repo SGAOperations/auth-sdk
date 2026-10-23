@@ -247,6 +247,35 @@ describe("stale window", () => {
   });
 });
 
+describe("unread bodies", () => {
+  function streamed(code: number, onCancel: () => void): Response {
+    const body = new ReadableStream<Uint8Array>({
+      cancel: onCancel,
+    });
+    return new Response(body, { status: code });
+  }
+
+  it.each([401, 503])("cancels the body of a %s response", async (code) => {
+    const onCancel = vi.fn();
+    const { client } = setup({}, () =>
+      Promise.resolve(streamed(code, onCancel)),
+    );
+    expect(await client.getSession(cookie())).toBeNull();
+    await realTick();
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("is not broken by a body whose cancel rejects", async () => {
+    const response = status(401);
+    Object.defineProperty(response, "body", {
+      value: { cancel: () => Promise.reject(new Error("boom")) },
+    });
+    const { client, errors } = setup({}, () => Promise.resolve(response));
+    expect(await client.getSession(cookie())).toBeNull();
+    expect(errors).toEqual([]);
+  });
+});
+
 describe("upstream failures", () => {
   const cases: Array<[string, () => Promise<Response>, SgaSessionErrorInfo]> = [
     [

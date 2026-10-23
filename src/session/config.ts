@@ -66,7 +66,9 @@ function deriveDontRememberName(cookieName: string): string | null {
 /** Folds options and environment into a frozen, range-checked config. */
 export function resolveConfig(
   options: SgauthClientOptions = {},
-  env: Record<string, string | undefined> = process.env,
+  env: Record<string, string | undefined> = typeof process === "undefined"
+    ? {}
+    : process.env,
 ): ResolvedConfig {
   const cookieName =
     options.cookieName ?? env["SGAUTH_COOKIE_NAME"] ?? DEFAULT_COOKIE_NAME;
