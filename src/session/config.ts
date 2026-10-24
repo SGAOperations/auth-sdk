@@ -63,6 +63,20 @@ function deriveDontRememberName(cookieName: string): string | null {
     : null;
 }
 
+/** The cookie name from the option, then `SGAUTH_COOKIE_NAME`, then the default. */
+export function resolveCookieName(
+  option?: string,
+  env: Record<string, string | undefined> = typeof process === "undefined"
+    ? {}
+    : process.env,
+): string {
+  const cookieName = option ?? env["SGAUTH_COOKIE_NAME"] ?? DEFAULT_COOKIE_NAME;
+  if (cookieName === "") {
+    throw new SgauthConfigError("cookieName must not be empty");
+  }
+  return cookieName;
+}
+
 /** Folds options and environment into a frozen, range-checked config. */
 export function resolveConfig(
   options: SgauthClientOptions = {},
@@ -70,11 +84,7 @@ export function resolveConfig(
     ? {}
     : process.env,
 ): ResolvedConfig {
-  const cookieName =
-    options.cookieName ?? env["SGAUTH_COOKIE_NAME"] ?? DEFAULT_COOKIE_NAME;
-  if (cookieName === "") {
-    throw new SgauthConfigError("cookieName must not be empty");
-  }
+  const cookieName = resolveCookieName(options.cookieName, env);
   const cacheTtlSeconds = integerInRange(
     "cacheTtlSeconds",
     options.cacheTtlSeconds,

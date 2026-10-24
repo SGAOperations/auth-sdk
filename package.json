@@ -37,6 +37,36 @@
         "default": "./dist/browser.cjs"
       }
     },
+    "./urls": {
+      "import": {
+        "types": "./dist/urls.d.ts",
+        "default": "./dist/urls.js"
+      },
+      "require": {
+        "types": "./dist/urls.d.cts",
+        "default": "./dist/urls.cjs"
+      }
+    },
+    "./proxy": {
+      "import": {
+        "types": "./dist/proxy.d.ts",
+        "default": "./dist/proxy.js"
+      },
+      "require": {
+        "types": "./dist/proxy.d.cts",
+        "default": "./dist/proxy.cjs"
+      }
+    },
+    "./next": {
+      "import": {
+        "types": "./dist/next.d.ts",
+        "default": "./dist/next.js"
+      },
+      "require": {
+        "types": "./dist/next.d.cts",
+        "default": "./dist/next.cjs"
+      }
+    },
     "./schemas/*": "./schemas/*",
     "./package.json": "./package.json"
   },
@@ -47,6 +77,15 @@
     "*": {
       "browser": [
         "./dist/browser.d.ts"
+      ],
+      "urls": [
+        "./dist/urls.d.ts"
+      ],
+      "proxy": [
+        "./dist/proxy.d.ts"
+      ],
+      "next": [
+        "./dist/next.d.ts"
       ]
     }
   },
@@ -88,5 +127,17 @@
   },
   "dependencies": {
     "server-only": "0.0.1"
+  },
+  "peerDependencies": {
+    "next": ">=15",
+    "react": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    }
   }
 }
