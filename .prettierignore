@@ -2,6 +2,9 @@ dist
 coverage
 package-lock.json
 
+# vendored byte-for-byte from SGAOperations/auth docs/api
+schemas/
+
 # installed and rewritten by the port pipeline
 .claude/
 scripts/port-*.mjs
