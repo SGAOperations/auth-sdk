@@ -107,7 +107,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "check:package": "npm run build && publint --strict && attw --pack ."
+    "check:package": "npm run build && publint --strict && attw --pack .",
+    "docs:api": "typedoc"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
