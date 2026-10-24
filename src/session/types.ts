@@ -1,31 +1,46 @@
 /** The signed-in user, as returned by SGAuth. */
 export interface SgaUser {
+  /** Stable SGAuth user id. */
   id: string;
+  /** The user's email address. */
   email: string;
+  /** The user's full name. */
   name: string;
+  /** The name the user prefers to be called, or `null` when unset. */
   preferredName: string | null;
+  /** Whether the user is an admin. */
   isAdmin: boolean;
+  /** Whether the user is the primary admin. */
   isPrimaryAdmin: boolean;
 }
 
 /** A position the user currently holds. */
 export interface SgaPosition {
+  /** Stable position key, such as `vp-finance`. Pass it to the guards. */
   key: string;
+  /** Human-readable position name. */
   name: string;
 }
 
 /** Session timing. All values are ISO 8601 strings so a session stays serializable. */
 export interface SgaSessionInfo {
+  /** SGAuth session id. */
   id: string;
+  /** When the session expires if it is not extended. */
   expiresAt: string;
+  /** When the session expires regardless of activity. */
   absoluteExpiresAt: string;
+  /** When the session was created. */
   createdAt: string;
 }
 
 /** The body of a successful `GET /api/sgauth/session` response. */
 export interface SgaSession {
+  /** The signed-in user. */
   user: SgaUser;
+  /** The positions the user currently holds. */
   positions: SgaPosition[];
+  /** Timing of the session itself. */
   session: SgaSessionInfo;
 }
 
@@ -50,6 +65,7 @@ export type SgaSessionErrorKind =
  * unexpectedly. Never carries the cookie, the token, or request headers.
  */
 export interface SgaSessionErrorInfo {
+  /** What kind of failure it was. */
   kind: SgaSessionErrorKind;
   /** The HTTP status, for `http` and `invalid-response` failures. */
   status?: number;
@@ -57,6 +73,7 @@ export interface SgaSessionErrorInfo {
   servedStale: boolean;
 }
 
+/** Options for `createSgauthClient()`. Every option has a default except the base URL. */
 export interface SgauthClientOptions {
   /** SGAuth origin. Defaults to `SGAUTH_URL`. */
   baseUrl?: string;
