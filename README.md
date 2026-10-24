@@ -17,7 +17,7 @@ The package is on the public npm registry, so no `.npmrc` or token is needed.
 
 ## Status
 
-Pre-1.0. The package exports `version` and the server-side session API below. Framework helpers land in #4.
+Pre-1.0. The package exports `version`, the server-side session API and the Supabase access-token API below. Framework helpers land in #4.
 
 ## Sessions
 
@@ -77,6 +77,67 @@ Misconfiguration throws `SgauthConfigError`. Dev and local SGAuth use different 
 - `getSession` never throws for an upstream failure. It throws only `SgauthConfigError` and `TypeError` for a bad input shape.
 
 **Never log the `Cookie` header or the raw session cookie.** Redact `cookie` in request loggers. `onError` never receives either.
+
+## Access tokens for Supabase clients
+
+SGAuth mints a short-lived JWT (about 10 minutes) that a product's Supabase project accepts. `getAccessToken()` fetches it from `{SGAUTH_URL}/api/auth/token` with the forwarded SGAuth cookie and caches it, keyed by the SHA-256 of the session token, until 60 seconds before its `exp`. It takes the same `{ headers } | { cookieHeader }` input and reads the same `SGAUTH_URL` and `SGAUTH_COOKIE_NAME` as `getSession()`. **Server-side only.**
+
+### On the server
+
+`createSupabaseAccessTokenProvider()` returns the `accessToken` callback shape that supabase-js's `createClient` expects. Build it per request:
+
+```ts
+import { createSupabaseAccessTokenProvider } from "@nusgaops/sgauth";
+import { createClient } from "@supabase/supabase-js";
+import { headers } from "next/headers";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  accessToken: createSupabaseAccessTokenProvider({ headers: await headers() }),
+});
+```
+
+The callback resolves to `null` for a signed-out user, and supabase-js then falls back to the anon key. `getAccessToken(input)` returns the same `string | null` directly.
+
+### In the browser
+
+The browser must never see the SGAuth cookie, so it asks a same-origin product route that proxies to SGAuth. Mount the route:
+
+```ts
+// app/api/sgauth/token/route.ts
+import { createAccessTokenRouteHandler } from "@nusgaops/sgauth";
+
+export const GET = createAccessTokenRouteHandler();
+export const dynamic = "force-dynamic";
+```
+
+It answers `200 { token }`, `401 { token: null }` when signed out, or `503 { error: "sgauth_unavailable" }`. Every response is `Cache-Control: no-store` and carries no CORS headers, so only same-origin scripts can read the token. Only the SGAuth cookie is forwarded upstream.
+
+Then build the client from the browser entry, which has no Node imports:
+
+```ts
+import { createBrowserSupabaseAccessTokenProvider } from "@nusgaops/sgauth/browser";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  accessToken: createBrowserSupabaseAccessTokenProvider({
+    // endpoint: "/api/sgauth/token" (the default)
+  }),
+});
+```
+
+### Options
+
+`getAccessToken`, `createSupabaseAccessTokenProvider` and `createAccessTokenRouteHandler` take an optional options object: `baseUrl`, `cookieName`, `timeoutMs`, `maxEntries`, `fetch` and `onError`, as in [Configuration](#configuration), plus `refreshSkewSeconds` (default 60, clamped to 0 to 300). Each options object gets its own cache, so create it once and reuse it rather than passing a fresh literal on every call.
+
+The browser provider takes `endpoint` (default `/api/sgauth/token`), `refreshSkewSeconds`, `timeoutMs` (default 3000), `onError` and `fetch`.
+
+### Behaviour and caveats
+
+- Concurrent callers share one request. A token is replaced once `exp - refreshSkewSeconds` passes.
+- **Revocation takes effect at the next refresh.** A revoked session keeps its cached token for up to about 9 minutes, and the JWT itself stays valid until its `exp`. A 401 or 403 drops the cached token, and nothing is cached for a signed-out user.
+- **Fail closed.** On a timeout, network error, 429, 5xx or malformed response, the cached token is served only while it has more than 10 seconds left, and `onError` is called. With nothing usable cached the result is `null` (the route answers 503). Failures are never cached.
+- `onError` receives `{ kind, status, servedStale }`, never a cookie or a token.
+- **Never log the forwarded `Cookie` header or the token.**
 
 ### Schemas
 
