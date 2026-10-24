@@ -4,6 +4,16 @@ export const version: string = __SGAUTH_SDK_VERSION__;
 export { createSgauthClient, getSession } from "./session/client.js";
 export type { SgauthClient } from "./session/client.js";
 export { SgauthConfigError } from "./session/config.js";
+export {
+  createSupabaseAccessTokenProvider,
+  getAccessToken,
+} from "./access-token.js";
+export type { SgauthAccessTokenOptions } from "./access-token.js";
+export { createAccessTokenRouteHandler } from "./route-handler.js";
+export type {
+  SgaAccessTokenErrorInfo,
+  SupabaseAccessTokenProvider,
+} from "./token-core.js";
 export type {
   GetSessionInput,
   HeadersLike,
