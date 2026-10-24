@@ -10,6 +10,14 @@ export {
 } from "./access-token.js";
 export type { SgauthAccessTokenOptions } from "./access-token.js";
 export { createAccessTokenRouteHandler } from "./route-handler.js";
+export {
+  hasAllPositions,
+  hasAnyPosition,
+  hasPosition,
+  isAdmin,
+} from "./guards.js";
+export { accountUrl, loginUrl, logoutUrl } from "./urls.js";
+export type { SgauthUrlOptions } from "./urls.js";
 export type {
   SgaAccessTokenErrorInfo,
   SupabaseAccessTokenProvider,

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added `getSession()` and `createSgauthClient()`: server-side session lookup with cookie forwarding, a 60-second in-memory cache, and stale-if-error fallback.
 - Added `getAccessToken()`, `createSupabaseAccessTokenProvider()` and `createAccessTokenRouteHandler()`, plus `createBrowserSupabaseAccessTokenProvider()` from the new `@nusgaops/sgauth/browser` subpath: SGAuth JWTs for Supabase clients, cached until 60 seconds before expiry.
+- Added Next.js helpers: `loginUrl()`, `logoutUrl()` and `accountUrl()` (`@nusgaops/sgauth/urls`), `createSgaProxy()` for `proxy.ts` / `middleware.ts` (`@nusgaops/sgauth/proxy`), `getServerSession()` and `requireSession()` (`@nusgaops/sgauth/next`), and the `hasPosition()`, `hasAnyPosition()`, `hasAllPositions()` and `isAdmin()` guards. `next` and `react` are optional peer dependencies.
 - Vendored the SGAuth session JSON Schemas into `schemas/`, byte-for-byte from `SGAOperations/auth` `docs/api/` at commit `0058eb55bd07cb3dead997fd47c88cd744e62ae4`. They are importable as `@nusgaops/sgauth/schemas/*`.
 
 ## [0.1.0]

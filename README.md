@@ -17,7 +17,7 @@ The package is on the public npm registry, so no `.npmrc` or token is needed.
 
 ## Status
 
-Pre-1.0. The package exports `version`, the server-side session API and the Supabase access-token API below. Framework helpers land in #4.
+Pre-1.0. The package exports `version`, the server-side session API, the Supabase access-token API and the Next.js helpers below.
 
 ## Sessions
 
@@ -146,6 +146,86 @@ The JSON Schemas for the session response ship under `@nusgaops/sgauth/schemas/*
 ### Integration test
 
 `npm run test:integration` signs in to an SGAuth deployment and asserts that sign-out is observed within 60 seconds. It skips unless `SGAUTH_URL`, `SGAUTH_COOKIE_NAME`, `SGAUTH_TEST_EMAIL` and `SGAUTH_TEST_PASSWORD` are set. Use a synthetic account without MFA.
+
+## Next.js
+
+Helpers for Next 15 and later (`next` and `react` are optional peer dependencies, so other products install cleanly). Each runtime gets its own entry:
+
+| Entry                    | Runs in                | Exports                                                                                                               |
+| ------------------------ | ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `@nusgaops/sgauth/urls`  | server or browser      | `loginUrl`, `logoutUrl`, `accountUrl`                                                                                 |
+| `@nusgaops/sgauth/proxy` | edge runtime           | `createSgaProxy`                                                                                                      |
+| `@nusgaops/sgauth/next`  | server only            | `getServerSession`, `requireSession`, the guards and the URL builders. Importing it from client code fails the build. |
+| `@nusgaops/sgauth`       | server (plain Node ok) | `getSession`, the guards and the URL builders                                                                         |
+
+### Environment
+
+- `SGAUTH_URL`: the SGAuth origin, read by server code.
+- `NEXT_PUBLIC_SGAUTH_URL`: the same origin, for the URL builders in client bundles. Optional on the server, where `SGAUTH_URL` is used.
+- `SGAUTH_COOKIE_NAME`: only when it differs from `__Secure-sgauth.session_token`.
+
+### Protect routes
+
+```ts
+// proxy.ts (Next 16). In Next 15, name the file middleware.ts and export `middleware` instead.
+import { createSgaProxy } from "@nusgaops/sgauth/proxy";
+
+export const proxy = createSgaProxy({
+  publicPaths: ["/", "/docs", /^\/api\/health$/],
+});
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+};
+```
+
+A string in `publicPaths` matches that path and everything beneath it (`/docs` matches `/docs/a`, not `/docsx`); `"/"` matches only the home page. A request without the SGAuth cookie is redirected to sign-in (`GET` and `HEAD`) or answered `401 { "error": "unauthenticated" }` (other methods). The proxy also sets an `x-sgauth-return-to` request header to the absolute URL, replacing any client-supplied value, so `requireSession()` can send the user back where they were.
+
+Then validate in server code:
+
+```tsx
+// app/protected/page.tsx
+import { requireSession } from "@nusgaops/sgauth/next";
+
+export default async function Page() {
+  const session = await requireSession(); // redirects to sign-in when invalid or revoked
+  return <p>Hello, {session.user.preferredName ?? session.user.name}</p>;
+}
+```
+
+```ts
+// A Server Action: check on the server, not just in the UI.
+"use server";
+import { hasPosition, requireSession } from "@nusgaops/sgauth/next";
+
+export async function approvePurchase() {
+  const session = await requireSession();
+  if (!hasPosition(session, "vp-finance")) return;
+  // ...
+}
+```
+
+`requireSession()` works in server components, Server Actions and route handlers. `getServerSession()` returns `SgaSession | null` without redirecting. It is wrapped in React's `cache`, so one request makes one SGAuth lookup however many components ask.
+
+Guards take `SgaSession | null | undefined` and treat no session as no access:
+
+- `hasPosition(session, key)`
+- `hasAnyPosition(session, keys)` and `hasAllPositions(session, keys)`, both `false` for an empty `keys` so nothing is granted vacuously
+- `isAdmin(session)`: an admin or the primary admin
+
+Guards throw if called in the browser. Only the URL builders are browser-safe. Render logout as a plain `<a href={logoutUrl(origin)}>`, never a prefetching `<Link>`.
+
+### Why the proxy never calls SGAuth
+
+The proxy runs on every request and on every instance. A network round trip there would add latency to every page, and it would bypass the per-instance session cache that `getSession()` relies on. So it only checks that the cookie exists. That is a UX redirect, not a security boundary: `requireSession()` is the boundary, and it rejects an invalid or revoked cookie.
+
+If a product keeps bouncing between sign-in and itself, `getSession()` is failing while SGAuth considers the user signed in. Check `SGAUTH_URL` first.
+
+`__Secure-` cookies need HTTPS, so plain `localhost` always looks signed out when testing locally.
+
+### Example app
+
+`examples/next-app/` shows a protected page, a position-gated Server Action and logout. See its README.
 
 ## Releasing
 

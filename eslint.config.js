@@ -5,7 +5,8 @@ import tseslint from "typescript-eslint";
 
 export default defineConfig(
   // scripts/port-*.mjs are installed and rewritten by the port pipeline.
-  { ignores: ["dist/", "coverage/", "scripts/port-*.mjs"] },
+  // examples/ are separate projects with their own tsconfig and dependencies.
+  { ignores: ["dist/", "coverage/", "examples/", "scripts/port-*.mjs"] },
   js.configs.recommended,
   {
     files: ["**/*.ts"],

@@ -22,14 +22,18 @@ const shared: Options = {
 export default defineConfig([
   {
     ...shared,
-    entry: ["src/index.ts"],
+    entry: { index: "src/index.ts", next: "src/next.ts" },
     target: "node20",
   },
   {
     // A browser platform makes esbuild fail the build if a `node:` import
-    // leaks into this entry's graph.
+    // leaks into these entries' graphs. `proxy` runs on the edge runtime.
     ...shared,
-    entry: { browser: "src/browser/index.ts" },
+    entry: {
+      browser: "src/browser/index.ts",
+      urls: "src/urls.ts",
+      proxy: "src/proxy.ts",
+    },
     platform: "browser",
     target: "es2022",
   },
