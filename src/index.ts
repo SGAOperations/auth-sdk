@@ -16,6 +16,7 @@ export {
   hasPosition,
   isAdmin,
 } from "./guards.js";
+export type { MaybeSession } from "./guards.js";
 export { accountUrl, loginUrl, logoutUrl } from "./urls.js";
 export type { SgauthUrlOptions } from "./urls.js";
 export type {

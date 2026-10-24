@@ -49,12 +49,22 @@ export interface SgaSession {
  * `ReadonlyHeaders`, or Node's `IncomingHttpHeaders`.
  */
 export type HeadersLike =
-  | { get(name: string): string | null }
+  | {
+      /** Returns the value of the named header, or `null` when absent. */
+      get(name: string): string | null;
+    }
   | Record<string, string | string[] | undefined>;
 
 /** What to read the session cookie from. */
 export type GetSessionInput =
-  { headers: HeadersLike } | { cookieHeader: string | null | undefined };
+  | {
+      /** The request headers; the `cookie` header is read from them. */
+      headers: HeadersLike;
+    }
+  | {
+      /** The raw `Cookie` header value, or nothing when the request has none. */
+      cookieHeader: string | null | undefined;
+    };
 
 /** Why an upstream call failed. */
 export type SgaSessionErrorKind =

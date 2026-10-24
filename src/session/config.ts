@@ -7,6 +7,7 @@ const NEGATIVE_TTL_SECONDS = 10;
 
 /** Thrown when the client is misconfigured. Messages name the option, never its value. */
 export class SgauthConfigError extends Error {
+  /** Always `"SgauthConfigError"`. */
   override readonly name = "SgauthConfigError";
 }
 

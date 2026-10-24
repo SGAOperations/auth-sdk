@@ -9,6 +9,7 @@ import type {
   SgauthClientOptions,
 } from "./types.js";
 
+/** A session client with its own cache. Build one with `createSgauthClient()`. */
 export interface SgauthClient {
   /**
    * Resolves the SGAuth session for the request's cookies. Returns `null` when
