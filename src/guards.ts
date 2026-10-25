@@ -1,6 +1,7 @@
 import type { SgaSession } from "./session/types.js";
 
-type MaybeSession = SgaSession | null | undefined;
+/** What the guards accept: a session, or no session. No session grants no access. */
+export type MaybeSession = SgaSession | null | undefined;
 
 // A runtime check rather than `server-only`: the root entry must stay
 // importable from plain Node, where `server-only` throws.

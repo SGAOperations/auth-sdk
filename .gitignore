@@ -43,3 +43,6 @@ next-env.d.ts
 
 # build output
 /dist
+
+# generated API reference (npm run docs:api)
+/docs/api/
