@@ -14,6 +14,8 @@ Breaking changes are listed under an **Upgrade notes** subsection of the release
 
 ## [Unreleased]
 
+## [0.2.0] - 10/24/26
+
 - Added `getSession()` and `createSgauthClient()`: server-side session lookup with cookie forwarding, a 60-second in-memory cache, and stale-if-error fallback.
 - Added `getAccessToken()`, `createSupabaseAccessTokenProvider()` and `createAccessTokenRouteHandler()`, plus `createBrowserSupabaseAccessTokenProvider()` from the new `@nusgaops/sgauth/browser` subpath: SGAuth JWTs for Supabase clients, cached until 60 seconds before expiry.
 - Added Next.js helpers: `loginUrl()`, `logoutUrl()` and `accountUrl()` (`@nusgaops/sgauth/urls`), `createSgaProxy()` for `proxy.ts` / `middleware.ts` (`@nusgaops/sgauth/proxy`), `getServerSession()` and `requireSession()` (`@nusgaops/sgauth/next`), and the `hasPosition()`, `hasAnyPosition()`, `hasAllPositions()` and `isAdmin()` guards. `next` and `react` are optional peer dependencies.
