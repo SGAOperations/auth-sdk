@@ -378,11 +378,37 @@ describe("dedupe", () => {
       }, 100);
     });
 
+  /**
+   * Starts `count` concurrent calls. `hashed` resolves once every call has
+   * finished hashing its token, so all of them are already sharing the
+   * in-flight request. Waiting for the first `fetch` alone is not enough: a
+   * slower hash could arrive after that request settled and start a second one.
+   */
+  function startConcurrent(
+    client: ReturnType<typeof createSgauthClient>,
+    count: number,
+  ) {
+    const digest = crypto.subtle.digest.bind(crypto.subtle);
+    const hashes: Promise<ArrayBuffer>[] = [];
+    const spy = vi
+      .spyOn(crypto.subtle, "digest")
+      .mockImplementation((...args) => {
+        const result = digest(...args);
+        hashes.push(result);
+        return result;
+      });
+    const all = Promise.all(
+      Array.from({ length: count }, () => client.getSession(cookie())),
+    );
+    spy.mockRestore();
+    const hashed = Promise.all(hashes).then(() => realTick());
+    return { all, hashed };
+  }
+
   it("shares one fetch between concurrent calls", async () => {
     const { client, fetchMock } = setup({}, slow(ok));
-    const all = Promise.all(
-      Array.from({ length: 5 }, () => client.getSession(cookie())),
-    );
+    const { all, hashed } = startConcurrent(client, 5);
+    await hashed;
     await untilCalls(fetchMock, 1);
     await vi.advanceTimersByTimeAsync(100);
     const results = await all;
@@ -395,9 +421,8 @@ describe("dedupe", () => {
       {},
       slow(() => status(503)),
     );
-    const all = Promise.all(
-      Array.from({ length: 5 }, () => client.getSession(cookie())),
-    );
+    const { all, hashed } = startConcurrent(client, 5);
+    await hashed;
     await untilCalls(fetchMock, 1);
     await vi.advanceTimersByTimeAsync(100);
     await all;
