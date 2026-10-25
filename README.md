@@ -244,7 +244,9 @@ Every public export, by entry point:
 | `@nusgaops/sgauth/urls`    | `loginUrl`, `logoutUrl`, `accountUrl`      | The URL builders, safe in the browser.                                                                                                                                                                                                                                                                     |
 | `@nusgaops/sgauth/browser` | `createBrowserSupabaseAccessTokenProvider` | The `accessToken` callback for supabase-js in the browser. Option type: `BrowserAccessTokenOptions`.                                                                                                                                                                                                       |
 
-Run `npm run docs:api` in a clone of this repository to build the full typedoc reference into `docs/api/`. The hosted reference lands with [#8](https://github.com/SGAOperations/auth-sdk/issues/8).
+Full API reference: https://sgaoperations.github.io/auth-sdk/ (updated on every release).
+
+Run `npm run docs:api` in a clone of this repository to build the full typedoc reference into `docs/api/`.
 
 ### Schemas
 
@@ -271,6 +273,10 @@ Deeper troubleshooting lives in the SGAuth integration guide.
 ## Integration test
 
 `npm run test:integration` signs in to an SGAuth deployment and asserts that sign-out is observed within 60 seconds. It skips unless `SGAUTH_URL`, `SGAUTH_COOKIE_NAME`, `SGAUTH_TEST_EMAIL` and `SGAUTH_TEST_PASSWORD` are set. Use a synthetic account without MFA.
+
+## Contributing
+
+Every pull request must add an entry to [`CHANGELOG.md`](CHANGELOG.md) under Unreleased; CI fails the `Changelog` check otherwise. A change with no user-facing effect (CI, repo tooling, typo fixes) uses the `skip changelog` label instead.
 
 ## Releasing
 

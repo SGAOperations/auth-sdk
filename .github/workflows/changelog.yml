@@ -1,0 +1,54 @@
+# Requires every pull request into main to change CHANGELOG.md.
+#
+# Exemption: a pull request labeled `skip changelog` passes. Use it for changes with no
+# user-facing effect (CI, repo tooling, typo fixes). Adding or removing the label re-runs
+# the check.
+#
+# NEVER narrow the trigger, add a job-level `if`, or rename the job. A workflow that does
+# not run creates no check run at all, which leaves a required check pending forever.
+#
+# This check only *enforces* anything if `changelog-check` is registered as a required
+# status check in the main branch ruleset. Until then it reports but does not block.
+
+name: Changelog
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  changelog-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require a changelog entry
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          SKIP: ${{ contains(github.event.pull_request.labels.*.name, 'skip changelog') }}
+        run: |
+          set -euo pipefail
+
+          if [ "$SKIP" = "true" ]; then
+            echo "Changelog check skipped: PR is labeled 'skip changelog'."
+            exit 0
+          fi
+
+          if ! gh pr view "$PR" --repo "$GITHUB_REPOSITORY" --json files \
+              --jq '.files[].path' > "$RUNNER_TEMP/files.txt"; then
+            echo "::error::Could not read changed files for PR #$PR."
+            exit 1
+          fi
+
+          if grep -Fxq "CHANGELOG.md" "$RUNNER_TEMP/files.txt"; then
+            echo "CHANGELOG.md updated — changelog check passed."
+            exit 0
+          fi
+
+          echo "::error::This PR does not change CHANGELOG.md. Add an entry under \"Unreleased\" describing the change (breaking changes go under \"Upgrade notes\"). If the change has no user-facing effect (CI, repo tooling, typo fixes), add the 'skip changelog' label instead."
+          exit 1
