@@ -19,6 +19,8 @@ Breaking changes are listed under an **Upgrade notes** subsection of the release
 - Added Next.js helpers: `loginUrl()`, `logoutUrl()` and `accountUrl()` (`@nusgaops/sgauth/urls`), `createSgaProxy()` for `proxy.ts` / `middleware.ts` (`@nusgaops/sgauth/proxy`), `getServerSession()` and `requireSession()` (`@nusgaops/sgauth/next`), and the `hasPosition()`, `hasAnyPosition()`, `hasAllPositions()` and `isAdmin()` guards. `next` and `react` are optional peer dependencies.
 - Vendored the SGAuth session JSON Schemas into `schemas/`, byte-for-byte from `SGAOperations/auth` `docs/api/` at commit `0058eb55bd07cb3dead997fd47c88cd744e62ae4`. They are importable as `@nusgaops/sgauth/schemas/*`.
 - Documentation: a consumer README (install, environment variables, quick start, caching and availability bounds, dev and preview topology, support policy), a README and `.env.example` for the example app, and TSDoc on the session types. Added the type-only export `MaybeSession` from the root entry.
+- Hosted API reference on GitHub Pages, published on each release.
+- CI requires a changelog entry on every pull request.
 
 ## [0.1.0]
 

@@ -1,0 +1,59 @@
+# Builds the typedoc API reference and deploys it to GitHub Pages at
+# https://sgaoperations.github.io/auth-sdk/.
+#
+# Runs when a GitHub Release is published, and on manual dispatch. There is no push
+# trigger on purpose: the site reflects the latest published release, never main.
+# On a release the tag is checked out; on dispatch the default ref is used.
+#
+# One-time admin step: Pages must be set to the "GitHub Actions" source
+# (Settings -> Pages -> Source), or the deploy job fails.
+
+name: Docs
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run docs:api
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/api
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
